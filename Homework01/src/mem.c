@@ -3,12 +3,13 @@
  *
  * Implementation of the memory area with several types.
  *
- * @author <Your name>
- * @date   <Date last modified>
+ * @author Pei-Jen Chen
+ * @date   12/07/2025
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #include "mem.h"
 
@@ -21,8 +22,12 @@
 void *
 getmem(int nc, int ni)
 {
-  // TODO: Add your code here...
-  return 0;
+  int charMem = (int) ceil((double)nc / 4);
+  int* mem = malloc(sizeof(int)*(2 + ni + charMem));
+  mem[0] = ni;
+  mem[1] = nc;
+
+  return (void*)(mem+2);
 }
 
 /**
@@ -31,7 +36,9 @@ getmem(int nc, int ni)
 void
 freemem(void *mem)
 {
-  // TODO: Add your code here...
+  int *p = (int*)mem;
+  p = p - 2;
+  free(p);
 }
 
 /**
@@ -40,8 +47,8 @@ freemem(void *mem)
 int
 getnc(void *mem)
 {
-  // TODO: Add your code here...
-  return -1;
+  int *p = (int*)mem;
+  return *(p-1);
 }
 
 /**
@@ -50,8 +57,8 @@ getnc(void *mem)
 int
 getni(void *mem)
 {
-  // TODO: Add your code here...
-  return -1;
+  int *p = (int*)mem;
+  return *(p-2);
 }
 
 /**
@@ -60,8 +67,12 @@ getni(void *mem)
 char *
 getstr(void *mem)
 {
-  // TODO: Add your code here...
-  return 0;
+  int *p = (int*)mem;
+  int ni = *(p-2);
+  p = p + ni;
+  
+  char *c = (char*)p;
+  return c;
 }
 
 /**
@@ -70,8 +81,7 @@ getstr(void *mem)
 int *
 getintptr(void *mem)
 {
-  // TODO: Add your code here...
-  return 0;
+  return (int*)mem;
 }
 
 /**
@@ -80,8 +90,10 @@ getintptr(void *mem)
 int
 getint_at(void *mem, int idx, int *res)
 {
-  // TODO: Add your code here...
-  return -1;
+  if (idx >= getni(mem) || idx < 0) return -1;
+  int *p = getintptr(mem);
+  *res = p[idx];
+  return 0;
 }
 
 /**
@@ -90,8 +102,10 @@ getint_at(void *mem, int idx, int *res)
 int
 setint_at(void *mem, int idx, int val)
 {
-  // TODO: Add your code here...
-  return -1;
+  if (idx >= getni(mem) || idx < 0) return -1;
+  int *p = getintptr(mem);
+  p[idx] = val;
+  return 0;
 }
 
 /**
@@ -100,6 +114,15 @@ setint_at(void *mem, int idx, int val)
 size_t
 cpstr(void *mem, const char *str, size_t len)
 {
-  // TODO: Add your code here...
-  return 0;
+  int numChar = getnc(mem);
+  if (len >= numChar) {
+    len = numChar - 1;
+  }
+
+  char* p = getstr(mem);
+  strncpy(p, str, len);
+
+  p[len] = '\0';
+
+  return len+1;
 }
