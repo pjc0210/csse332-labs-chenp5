@@ -25,4 +25,27 @@
  * OPTIONAL: read the number of children to create from the command line.
  */
 
-// TODO: Add your code here!
+int main(int argc, char **argv) {
+    int rc; 
+    int num_children = atoi(argv[1]);
+    int count = 1;
+    printf("Parent has pid: %d\n", getpid());
+    
+    while (count <= num_children) {
+	rc = fork();
+	if (rc < 0) {
+	    perror("fork failed:");
+	    exit(EXIT_FAILURE);
+	}
+
+	if (rc == 0) {
+	    printf("Child %d has pid: %d\n", count, getpid());
+	    count++;
+	} else {
+	    wait(0);
+	    break;
+	}
+    }
+
+    return 0;
+}
