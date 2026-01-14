@@ -20,6 +20,16 @@ struct program_info {
   pid_t pid; //!< The pid of the program we're checking for.
   int ready; //!< Boolean flag indicating whether parsing for this struct has
              //   completed.
+  //int fd;
+  FILE *fd;
+  void *codeStart;
+  void *codeEnd;
+  void *stackStart;
+  void *stackEnd;
+  void *heapStart;
+  void *heapEnd;
+  void *globalsStart;
+  void *globalsEnd;
 };
 
 /**

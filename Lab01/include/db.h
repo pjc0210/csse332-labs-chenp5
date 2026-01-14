@@ -11,8 +11,7 @@
 
 /**
  * An malleable node abstraction.
- *
- * This data structure approach is based on the list_node approach found in the
+
  * Linux kernel.
  */
 struct oo_node {

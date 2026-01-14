@@ -3,8 +3,8 @@
  *
  * Implementation of the memory area with several types.
  *
- * @author <Your name>
- * @date   <Date last modified>
+ * @author Pei-Jen Chen
+ * @date   12/17/2025
  */
 #ifndef FREADING_H
 #define FREADING_H

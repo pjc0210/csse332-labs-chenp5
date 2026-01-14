@@ -27,7 +27,9 @@ node_mk_node(struct oo_node *node)
 void
 node_rm_node(struct oo_node *node)
 {
-  // TODO: Add your code here...
+  node->prev->next = node->next;
+  node->next->prev = node->prev;
+  node->next = node->prev = node;
 }
 
 // This is a helper function, feel free to keep it here or remove it if you do
@@ -47,7 +49,7 @@ _node_add(struct oo_node *left, struct oo_node *node)
 void
 node_add_tail(struct oo_node *head, struct oo_node *node)
 {
-  // TODO: Add your code here..
+  _node_add(head->prev, node);
 }
 
 /**
@@ -56,7 +58,7 @@ node_add_tail(struct oo_node *head, struct oo_node *node)
 void
 node_add_head(struct oo_node *head, struct oo_node *node)
 {
-  // TODO: Add your code here..
+  _node_add(head, node);
 }
 
 /**
@@ -83,7 +85,8 @@ node_to_dbulong(struct oo_node *node)
 void
 db_add_record(struct db *db, struct oo_node *node)
 {
-  // TODO: Add your code here...
+  node_add_tail(&db->head, node);
+  db->rcount++;
 }
 
 /**
@@ -142,5 +145,22 @@ join_str_db(struct db *db)
 int
 searching_seek_and_destroy(struct db *db, unsigned long value)
 {
-  // TODO: Add your code here....
+  struct oo_node *currNode = db->head.next;
+  struct oo_node *tempNextNode;
+  unsigned long num;
+  int count = 0;
+
+  while (currNode->next != &db->head) {
+    num = node_to_dbulong(currNode)->value;
+    if (num == value) {
+	tempNextNode = currNode->next;
+	node_rm_node(currNode);
+	currNode = tempNextNode;
+	count++;
+    } else {
+	currNode = currNode->next;	
+    }
+  }
+  db->rcount -= count;
+  return count;
 }

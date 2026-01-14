@@ -3,8 +3,8 @@
  *
  * Implementation of the memory area with several types.
  *
- * @author <Your name>
- * @date   <Date last modified>
+ * @author Pei-Jen Chen
+ * @date   12/17/2025
  */
 #include <errno.h>
 #include <stdio.h>
@@ -44,8 +44,24 @@ get_stream_size(FILE *fp)
 ssize_t
 stream_read_bytes(FILE *fp, char *buf, ssize_t len, size_t incr)
 {
-  // TODO: Complete this step for the lab.
-  return 0;
+    int rc;
+    ssize_t num_bytes_read = 0;
+
+    while (num_bytes_read < len) {
+	rc = fread(buf, sizeof(char), incr, fp);
+	if (rc <= 0) {
+	    if (feof(fp)) {
+		break;
+	    } else {
+		perror("fread");
+		return -1;
+	    }
+	} else {
+	    num_bytes_read += rc;
+	    buf += incr;
+	}
+    }
+    return num_bytes_read;
 }
 
 static double
@@ -76,7 +92,7 @@ _main(int argc, char **argv)
 
   // TODO: Please comment out this line when you implement the last step in
   // this file.
-  (void)_subtract_timspec(ts_start, ts_end);
+  //(void)_subtract_timspec(ts_start, ts_end);
 
   if(argc > 1) {
     errno = 0;
@@ -112,7 +128,7 @@ _main(int argc, char **argv)
   // Add #include <time.h> if it's not there.
   //
 
-  // clock_gettime(CLOCK_MONOTONIC, &ts_start);
+  clock_gettime(CLOCK_MONOTONIC, &ts_start);
   //
   //   THING YOU'D LIKE TO MEASURE HERE
   //
@@ -121,10 +137,25 @@ _main(int argc, char **argv)
   //    PLEASE USE THE SAME FPRINTF STATEMENT BELOW AS THE GRADING SCRIPT
   //    DEPENDS ON IT.
   //
-  // clock_gettime(CLOCK_MONOTONIC, &ts_end);
-  // fprintf(stderr, "%lf seconds time elapsed\n",
-  //         _subtract_timspec(ts_end, ts_start));
+  char *buf = malloc(fsize * sizeof(char));
+  if (!buf) {
+    printf("PANIC: OUT OF MEMORY\n");
+    return EXIT_FAILURE;
+  }
 
+  rc = stream_read_bytes(stream, buf, fsize, blk);
+  if (rc < 0) {
+    printf("PANIC: stream_read_bytes failed!\n");
+    free(buf);
+    return EXIT_FAILURE;
+  }
+  printf("stream_read_bytes read %d bytes!\n", rc);
+
+  clock_gettime(CLOCK_MONOTONIC, &ts_end);
+  fprintf(stderr, "%lf seconds time elapsed\n",
+	  _subtract_timspec(ts_end, ts_start));
+  
+  free(buf);
   fclose(stream);
   return rc;
 }

@@ -14,10 +14,7 @@
 #include "proc_read.h"
 
 int
-main(int argc, char **argv)
-{
-  // Here's a sample way for you to use this API
-  //
+main(int argc, char **argv){ 
   struct program_info pinfo;
   void *start, *end;
   memset(&pinfo, 0, sizeof pinfo);
