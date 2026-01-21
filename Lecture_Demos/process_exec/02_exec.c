@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 int
 main()
@@ -19,7 +20,10 @@ main()
     // char *args[] = {"buffalosay.run", "Hi", NULL};
     // execvp("./buffalosay.run", args);
 
-    // When will this line of code ever execute?
+    // When will this line of code ever execute? NEVER -> there is no returning from exec call, unless there is error with exec
+    printf("I am a sad child child because I could not exec!\n");
+    perror("PANIC: exec failed");
+    exit(EXIT_FAILURE);
   }
 
   printf("Parent: Waiting for child %d\n", pid);

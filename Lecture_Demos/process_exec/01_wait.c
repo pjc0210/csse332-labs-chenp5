@@ -18,6 +18,8 @@ main()
   int status;
   int rc;
 
+  int pids[NUM_CHILDREN];
+
   for(int i = 0; i < NUM_CHILDREN; i++) {
     pid = fork();
     if(pid < 0) {
@@ -42,11 +44,14 @@ main()
     }
 
     // parent
+    pids[i] = pid;
     printf("Parent: I created a child with PID: %d\n", pid);
   }
 
   for(int i = 0; i < NUM_CHILDREN; i++) {
-    rc = wait(&status);
+    rc = waitpid(pids[NUM_CHILDREN-1-i], &status, 0);
+
+    // rc = wait(&status);
     if(rc < 0) {
       fprintf(stderr, "Parent: Something bad happened to my child!\n");
       exit(EXIT_FAILURE);
