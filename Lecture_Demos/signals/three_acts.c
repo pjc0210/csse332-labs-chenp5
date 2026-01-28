@@ -29,18 +29,31 @@
 
    Uncomment part3(); in main when you ready.
 
-*/
+*/i
+
+void setsighandler(int signum, void (*handler)(int)) {
+    struct sigaction act;
+
+    act.sa_handler = handler;
+    sigemptyset(&act.sa_mask);
+    act.sa_flags = SA_RESTART;
+    sigaction(signum, &act, NULL);
+}
+
 
 void part1()
 {
+  setsighandler(SIGINT, cleanup);
   printf("Starting slow process Part 1 of 3.  It is currently safe to abort this process with ^C.\n");
   sleep(4);
 }
 
 void part2()
 {
+  sigmask(
   printf("Starting slow process Part 2 of 3.  It is NOT safe to abort/interrupt this process with ^C.\n");
   sleep(4);
+
 }
 
 void part3()

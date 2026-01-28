@@ -35,6 +35,8 @@ int main(int argc, char **argv)
       write(fd[1], "a", 1);
     }
     printf("[Child %d] Done writing the 5 characters\n", getpid());
+    
+    close(fd[1]);
 
     // leave
     exit(100);
