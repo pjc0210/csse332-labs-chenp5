@@ -24,6 +24,7 @@ main(int argc, char *argv[])
 {
   #define MAX_THREADS 5
   char *ids[MAX_THREADS] = {"A", "B", "C", "D", "E"};
+  
   if(argc != 2) {
     fprintf(stderr, "usage: %s <loopcount>\n", argv[0]);
     exit(1);
