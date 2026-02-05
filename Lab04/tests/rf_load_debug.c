@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/mman.h>
+#include <unistd.h>
 
 #include "rf_load.h"
 #include "rf_parse.h"
@@ -24,6 +25,7 @@ debug_calc_npages(void)
   npages = calc_npages(&st);
 
   printf("Calculated %d pages!\n", npages);
+  printf("page size is %d\n", getpagesize());
 }
 
 void
@@ -83,8 +85,8 @@ main(int argc, char **argv)
   //  Comment or uncomment parts of this file to debug different functions.
   //
 
-  // debug_calc_npages();
-  debug_exec(argc, argv);
+  debug_calc_npages();
+  //debug_exec(argc, argv);
 
   return 0;
 }

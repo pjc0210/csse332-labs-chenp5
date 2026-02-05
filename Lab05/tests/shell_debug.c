@@ -18,11 +18,14 @@ int
 main(int argc, char **argv)
 {
   char *cmd = "echo hello";
-  int carg  = 0;
+  int carg;
   int i     = 0;
   char *varg[MAX_SHELL_ARGS];
 
+  printf("got here 1\n");
+
   carg = generate_exec_args(cmd, varg);
+  printf("got here 2\n");
   for(i = 0; i < carg; i++) {
     printf("argv[i] is %s\n", argv[i]);
   }

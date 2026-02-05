@@ -18,7 +18,7 @@
 
 #define SHELL_PROMPT "rhsh"
 // the maximum number of arguments, including the '&' for background commands
-// and the null terminateor.
+// and the null terminator.
 #define MAX_ARGS 16
 
 char *
@@ -72,7 +72,7 @@ process_command(char *cmd)
   printf("Received from the shell the command: %s\n", cmd);
 
   if(cmd[strlen(cmd) - 1] == '&') {
-    cmd[strlen(cmd) - 1] = 0;
+    cmd[strlen(cmd) - 2] = 0;
     start_bg_command(cmd);
   } else {
     start_fg_command(cmd);
@@ -85,7 +85,35 @@ generate_exec_args(char *cmd, char *argv[])
   // TODO:
   // =====
   //  Implement this function...
-  return 0;
+
+  //const char delimiter[2] = " ";
+  //char *arg;
+  //int ind = 0;
+
+  //arg = strtok(cmd, delimiter);
+  //while (arg != NULL && ind < MAX_ARGS) {
+    //printf("found %s at ind %d\n", arg, ind);
+    //argv[ind++] = arg;
+    //arg = strtok(NULL, delimiter);
+  //}
+  //argv[ind] = NULL;
+
+  char *p = cmd;
+  int i = 0;
+
+  // This covers the name of the program
+  argv[i++] = cmd;
+  
+  while (*p != '\0') {
+    if (isspace(*p)) {
+      *p = '\0';
+      argv[i++] = p+1;
+    }
+    p++;
+  }
+  argv[i] = NULL;
+
+  return i;
 }
 
 int
@@ -94,7 +122,38 @@ start_fg_command(char *cmd)
   // TODO:
   // =====
   //   Implement code to start a foreground command.
-  return -1;
+  char *args[MAX_ARGS];
+  int num_args = generate_exec_args(cmd, args);
+
+  int pid = fork();
+  if (pid < 0) {
+    perror("fork failed.\n");
+    exit(EXIT_FAILURE);
+  }
+ 
+  if (pid == 0) {
+    // child process
+    printf("Running foreground command %s with %d arguments\n", args[0], num_args);
+    execvp(args[0], args);
+
+    perror("execvp failed.\n");
+    exit(EXIT_FAILURE);
+  }
+  
+  int status;
+  int rc;
+  rc = waitpid(pid, &status, 0);
+  if (rc < 0) {
+    perror("waitpid failed.\n");
+    exit(EXIT_FAILURE);
+  }
+  int exit_code = WIFEXITED(status);
+  if (exit_code) {
+    printf("Command %s exited successfully\n", args[0]);
+    return exit_code;
+  } else {
+    return -1;
+  }
 }
 
 void
@@ -103,4 +162,23 @@ start_bg_command(char *cmd)
   // TODO:
   // =====
   //   Implement code to start a background command.
+  char *args[MAX_ARGS];
+  int num_args = generate_exec_args(cmd, args);
+
+  int pid = fork();
+  if (pid < 0) {
+    perror("fork failed.\n");
+    exit(EXIT_FAILURE);
+  }
+ 
+  if (pid == 0) {
+    // child process
+    printf("Running background command %s with %d arguments\n", args[0], num_args);
+    
+    execvp(args[0], args);
+
+    perror("execvp failed.\n");
+    exit(EXIT_FAILURE);
+  }
+ 
 }

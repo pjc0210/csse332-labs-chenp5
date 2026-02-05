@@ -22,19 +22,23 @@ mythread(void *arg)
 int
 main(int argc, char *argv[])
 {
+  #define MAX_THREADS 5
+  char *ids[MAX_THREADS] = {"A", "B", "C", "D", "E"};
   if(argc != 2) {
     fprintf(stderr, "usage: %s <loopcount>\n", argv[0]);
     exit(1);
   }
   max = atoi(argv[1]);
 
-  pthread_t p1, p2;
+  pthread_t pthreads[MAX_THREADS];
   printf("main: begin [counter = %d]\n", counter);
-  pthread_create(&p1, NULL, mythread, "A");
-  pthread_create(&p2, NULL, mythread, "B");
+  for (int i = 0; i < MAX_THREADS; i++) {
+    pthread_create(&pthreads[i], NULL, mythread, ids[i]);
+  }
   // join waits for the threads to finish
-  pthread_join(p1, NULL);
-  pthread_join(p2, NULL);
-  printf("main: done\n [counter: %d]\n [should: %d]\n", counter, max * 2);
+  for (int i = 0; i < MAX_THREADS; i++) {
+    pthread_join(pthreads[i], NULL);
+  }
+  printf("main: done\n [counter: %d]\n [should: %d]\n", counter, max * MAX_THREADS);
   return 0;
 }
